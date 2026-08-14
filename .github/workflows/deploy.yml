@@ -1,0 +1,48 @@
+name: Deploy Landing Page
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    name: Deploy Landing Page to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          command_timeout: 15m
+          script: |
+            set -e
+            echo "🚀 Starting Landing Page Deployment..."
+
+            cd /var/www/COLORPREDICT-LANDING
+
+            echo "📦 Pulling latest main branch..."
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "🔨 Building Landing Page Docker Image..."
+            docker build -t colorpredict-landing:latest .
+
+            echo "🔄 Swapping Landing Page container..."
+            docker stop colorpredict-landing || true
+            docker rm colorpredict-landing || true
+
+            echo "🚀 Launching new Landing Page container..."
+            docker run -d \
+              --restart always \
+              --name colorpredict-landing \
+              --network colorpredict-network \
+              -p 5003:80 \
+              colorpredict-landing:latest
+
+            echo "✅ Landing Page Successfully Deployed!"
