@@ -21,8 +21,8 @@ export default function App() {
 
   useEffect(() => {
     // Attempt to fetch real-time public config from backend
-    const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1').replace(/\/$/, '');
-    const backendBase = (import.meta.env.VITE_BACKEND_URL || apiBase.replace(/\/api(\/v1)?$/, '') || 'http://localhost:5000').replace(/\/$/, '');
+    const apiBase = (import.meta.env.VITE_API_URL || 'http://160.191.14.113:5000/api/v1').replace(/\/$/, '');
+    const backendBase = (import.meta.env.VITE_BACKEND_URL || apiBase.replace(/\/api(\/v1)?$/, '') || 'http://160.191.14.113:5000').replace(/\/$/, '');
 
     fetch(`${apiBase}/game/config`)
       .then(res => res.json())
