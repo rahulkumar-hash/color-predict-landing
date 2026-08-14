@@ -12,7 +12,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy via SSH to VPS
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Sync Code to VPS via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST || '160.191.14.113' }}
+          username: ${{ secrets.VPS_USER || 'root' }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          source: "."
+          target: "/var/www/COLORPREDICT-LANDING"
+          rm: false
+
+      - name: Build & Swap Landing Page Container via SSH
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST || '160.191.14.113' }}
@@ -25,10 +39,6 @@ jobs:
             echo "🚀 Starting Landing Page Deployment..."
 
             cd /var/www/COLORPREDICT-LANDING
-
-            echo "📦 Pulling latest main branch..."
-            git fetch origin
-            git reset --hard origin/main
 
             echo "🔨 Building Landing Page Docker Image..."
             docker build -t colorpredict-landing:latest .
