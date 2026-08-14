@@ -21,17 +21,23 @@ export default function App() {
 
   useEffect(() => {
     // Attempt to fetch real-time public config from backend if connected
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+    const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1').replace(/\/$/, '');
+    const backendBase = (import.meta.env.VITE_BACKEND_URL || apiBase.replace(/\/api(\/v1)?$/, '') || 'http://localhost:5000').replace(/\/$/, '');
+
     fetch(`${apiBase}/game/config`)
       .then(res => res.json())
       .then(json => {
         if (json?.data) {
           const d = json.data;
+          const downloadUrl = d.apkUrl
+            ? (d.apkUrl.startsWith('http') ? d.apkUrl : `${backendBase}${d.apkUrl.startsWith('/') ? '' : '/'}${d.apkUrl}`)
+            : `${apiBase}/game/download-apk`;
+
           setConfig(prev => ({
             ...prev,
             name: d.appName || prev.name,
             version: d.apkVersion || prev.version,
-            downloadUrl: d.apkUrl ? (d.apkUrl.startsWith('http') ? d.apkUrl : `http://localhost:5000${d.apkUrl}`) : prev.downloadUrl,
+            downloadUrl,
             supportWhatsapp: d.supportWhatsapp || prev.supportWhatsapp,
             supportEmail: d.supportEmail || prev.supportEmail
           }));
