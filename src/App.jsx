@@ -20,20 +20,29 @@ export default function App() {
   const [config, setConfig] = useState(SITE_CONFIG);
 
   useEffect(() => {
-    // Only attempt to fetch if VITE_API_URL is explicitly configured
-    const apiBase = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '';
-    if (!apiBase) return;
+    // Attempt to fetch real-time public config from backend
+    const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1').replace(/\/$/, '');
+    const backendBase = (import.meta.env.VITE_BACKEND_URL || apiBase.replace(/\/api(\/v1)?$/, '') || 'http://localhost:5000').replace(/\/$/, '');
 
     fetch(`${apiBase}/game/config`)
       .then(res => res.json())
       .then(json => {
         if (json?.data) {
           const d = json.data;
+          let liveDownloadUrl = `${apiBase}/game/download-apk`;
+          if (d.apkUrl) {
+            if (d.apkUrl.startsWith('http')) {
+              liveDownloadUrl = d.apkUrl;
+            } else if (d.apkUrl.startsWith('/')) {
+              liveDownloadUrl = `${backendBase}${d.apkUrl}`;
+            }
+          }
+
           setConfig(prev => ({
             ...prev,
             name: d.appName || prev.name,
             version: d.apkVersion || prev.version,
-            downloadUrl: (d.apkUrl && d.apkUrl.startsWith('http')) ? d.apkUrl : prev.downloadUrl,
+            downloadUrl: liveDownloadUrl,
             supportWhatsapp: d.supportWhatsapp || prev.supportWhatsapp,
             supportEmail: d.supportEmail || prev.supportEmail
           }));
