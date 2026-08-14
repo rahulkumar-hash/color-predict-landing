@@ -1,14 +1,10 @@
 // Centralized Theme Configuration & Data Store
-const defaultApiUrl = typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL
-  ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
-  : 'http://localhost:5000/api/v1';
-
 export const SITE_CONFIG = {
   name: "COLOR PREDICT OFFICIAL",
   appName: "Color Predict App",
   version: "v5.4.0 (Latest Release)",
   tagline: "India's #1 Instant Color & Number Prediction Platform",
-  downloadUrl: `${defaultApiUrl}/game/download-apk`,
+  downloadUrl: "/color-predict-official.apk",
   whatsappNumber: "916375057068",
   whatsappUrl: "https://wa.me/916375057068?text=Hello%20Color%20Predict%20Support%2C%20I%20want%20to%20download%20the%20app%20and%20register!",
   telegramUrl: "https://t.me/colorpredict_official",
