@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, ShieldCheck, QrCode, Smartphone, CheckCircle2, MessageCircle } from 'lucide-react';
 import { SITE_CONFIG } from '../theme/themeConfig';
 
-export default function DownloadModal({ isOpen, onClose }) {
+export default function DownloadModal({ isOpen, onClose, config }) {
   if (!isOpen) return null;
+
+  const cfg = config || SITE_CONFIG;
 
   return (
     <AnimatePresence>
@@ -32,7 +34,7 @@ export default function DownloadModal({ isOpen, onClose }) {
               <ShieldCheck className="w-3.5 h-3.5" /> 100% Safe Android APK
             </div>
             <h3 className="font-orbitron font-black text-xl sm:text-2xl text-gradient-gold">
-              DOWNLOAD {SITE_CONFIG.name}
+              DOWNLOAD {cfg.name}
             </h3>
             <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto">
               Get the latest official app for 1-Minute Live Color Prediction & Instant UPI Withdrawals.
@@ -51,13 +53,13 @@ export default function DownloadModal({ isOpen, onClose }) {
             <span className="text-[11px] text-slate-400 font-mono block">Scan with camera or click button below</span>
 
             <a
-              href={SITE_CONFIG.downloadUrl}
-              download
+              href={cfg.downloadUrl}
+              download="color-predict-official.apk"
               onClick={onClose}
               className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-poppins font-black text-sm tracking-wide shadow-green-glow flex items-center justify-center gap-2 btn-touch active:scale-95 transition-all"
             >
               <Download className="w-5 h-5 text-white stroke-[3] animate-bounce" />
-              <span>DIRECT APK DOWNLOAD ({SITE_CONFIG.version})</span>
+              <span>DIRECT APK DOWNLOAD ({cfg.version})</span>
             </a>
           </div>
 
